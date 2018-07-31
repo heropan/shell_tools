@@ -22,15 +22,30 @@ do_ip() {
 	IP=$1
 }
 
-PORT=11334
+PORT=22604
 register_option "--port=<port>" do_port "port"
 do_port() {
 	PORT=$1
 }
 
+TX_HASH=
+register_option "--hash=<value>" do_tx_hash "tx hash"
+do_tx_hash() {
+	TX_HASH=$1
+}
+
 extract_parameters $@
 
-CMD="curl http://$IP:$PORT/api/v1/transactionpool"
+if [ -z "$TX_HASH" ]; then
+	echo "please input tx hash with --hash=<value>"
+	exit 1
+fi
+
+CMD="curl http://$IP:$PORT/api/v1/transaction/$TX_HASH"
 echo "$CMD"
 run $CMD
 
+TX_HASH=`echo $TX_HASH | rev`
+CMD="curl http://$IP:$PORT/api/v1/transaction/$TX_HASH"
+echo "$CMD"
+run $CMD
