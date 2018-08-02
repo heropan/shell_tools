@@ -28,24 +28,51 @@ do_port() {
 	PORT=$1
 }
 
-TX_HASH=
-register_option "--hash=<value>" do_tx_hash "tx hash"
-do_tx_hash() {
-	TX_HASH=$1
+REVERSE_HASH=no
+register_option "-r" do_reverse_hash "reverse hash"
+do_reverse_hash() {
+	REVERSE_HASH=yes
 }
 
 extract_parameters $@
 
-if [ -z "$TX_HASH" ]; then
-	echo "please input tx hash with --hash=<value>"
+PROGRAM_PARAMETERS=hash
+
+TX_HASH=$PARAMETERS
+
+err() {
+	echo "ERROR: $1"
 	exit 1
+}
+
+if [ -z "$TX_HASH" ]; then
+	err "Please input tx hash"
+fi
+
+HASH_LEN=${#TX_HASH}
+if [ $(($HASH_LEN % 2)) != 0 ]; then
+	err "'$TX_HASH' length is not even"
+fi
+
+reverse_hex_string() {
+	reversed_string=
+	for ((i = 0; i < $HASH_LEN; i += 2))
+	do
+		substr=${TX_HASH:$i:2}
+		reversed_string=$substr$reversed_string
+	done
+	TX_HASH=$reversed_string
+	echo "reversed_string=$reversed_string"
+}
+
+if [ "yes" = "$REVERSE_HASH" ]; then
+	echo "reverse hash = $TX_HASH"
+	reverse_hex_string $TX_HASH
 fi
 
 CMD="curl http://$IP:$PORT/api/v1/transaction/$TX_HASH"
 echo "$CMD"
 run $CMD
 
-TX_HASH=`echo $TX_HASH | rev`
-CMD="curl http://$IP:$PORT/api/v1/transaction/$TX_HASH"
-echo "$CMD"
-run $CMD
+echo ""
+

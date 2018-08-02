@@ -22,7 +22,7 @@ do_ip() {
 	IP=$1
 }
 
-PORT=11334
+PORT=22604
 register_option "--port=<port>" do_port "port"
 do_port() {
 	PORT=$1
@@ -33,4 +33,6 @@ extract_parameters $@
 CMD="curl http://$IP:$PORT/api/v1/transactionpool"
 echo "$CMD"
 run $CMD
+
+echo ""
 

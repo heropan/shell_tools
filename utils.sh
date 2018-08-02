@@ -323,7 +323,7 @@ do_option_help() {
 	exit 0
 }
 
-VERBOSE=no
+VERBOSE=yes
 register_option "--verbose"       do_option_verbose  "Enable verbose mode."
 do_option_verbose() {
 	VERBOSE=yes
