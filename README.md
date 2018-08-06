@@ -23,9 +23,12 @@ For more detail, use --help
 $ ./tx.sh --help
 ```
 
-Query mempool
+## Query mempool
 ```
 $ ./mempool.sh
 ```
+
+## Development
+Patches are welcome. Please submit pull requests against the `dev` branch.
 
 Enjoy!
