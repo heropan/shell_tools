@@ -16,7 +16,7 @@
 
 . `dirname $0`/utils.sh
 
-FROM="EN9YK69ScA6WFgVQW3UZcmSRLSCStaU2pQ"
+FROM=""
 register_option "--from=<address>" do_ip "Transfer  address"
 do_ip() {
 	FROM=$1
@@ -42,6 +42,12 @@ do_set_passwd() {
 
 extract_parameters $@
 
-./ela-cli wallet -t create --from $FROM --to $PARAMETERS --amount $AMOUNT --fee $FEE
+if [ "X$FROM" = "X" ]; then
+	FROM_ARG=
+else
+	FROM_ARG="--from $FROM"
+fi
+
+./ela-cli wallet -t create $FROM_ARG --to $PARAMETERS --amount $AMOUNT --fee $FEE
 ./ela-cli wallet -t sign --file to_be_signed.txn -p $PASSWD
 ./ela-cli wallet -t send --file ready_to_send.txn
